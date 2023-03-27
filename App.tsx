@@ -1,14 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TimerCountDownDisplay } from './Components/TimerCountDownDisplay';
+import { TimerToggleButton } from './Components/TimerToggleButton';
 
 const FOCUS_TIME_MINUTES = 0.2 * 60 * 1000
-const BREAK_TIME_MINUTES = 0.1 * 60 * 1000
+const COMPLETE_TIME_MINUTES = 0 * 60 * 1000
 export default function App() {
    const [timerCount, setTimerCount] = useState<number>(FOCUS_TIME_MINUTES)
    const [timerInterval, setTimerInterval] = useState<NodeJS.Timer | null>(null)
    const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false)
+   const [timerMode, setTimerMode] = useState<'Meditate' | 'Complete'>('Meditate')
+   
+   useEffect(() => {
+    if(timerCount === 0){
+      if(timerMode === 'Meditate'){
+        setTimerMode('Complete')
+        setTimerCount(COMPLETE_TIME_MINUTES)
+      }else{
+        setTimerMode('Meditate')
+        setTimerCount(FOCUS_TIME_MINUTES)
+      }
+      stopTimer()
+    }
+   }, [timerCount])
 
    const startTimer = () => {
     setIsTimerRunning(true)
@@ -25,10 +40,10 @@ setIsTimerRunning(false)
 
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+      <Text>{timerMode==='Meditate' ? 'Meditate':"Complete"} </Text>
       <StatusBar style="auto" />
-      <Button title={isTimerRunning ? 'Stop Timer' : 'Start Timer'} onPress={isTimerRunning ? stopTimer : startTimer }></Button>
-      <TimerCountDownDisplay timerDate={new Date(timerCount)}/>
+      <TimerToggleButton isTimerRunning={isTimerRunning} startTimer={startTimer} stopTimer={stopTimer} />
+       <TimerCountDownDisplay timerDate={new Date(timerCount)}/>
     </View>
   );
 }
@@ -36,7 +51,7 @@ setIsTimerRunning(false)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#d95550',
     alignItems: 'center',
     justifyContent: 'center',
   },
