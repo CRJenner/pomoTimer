@@ -3,8 +3,9 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import { useEffect, useState } from 'react';
 import { TimerCountDownDisplay } from './Components/TimerCountDownDisplay';
 import { TimerToggleButton } from './Components/TimerToggleButton';
+import { TimerModeDisplay } from './Components/TimerModeDisplay';
 
-const FOCUS_TIME_MINUTES = 0.2 * 60 * 1000
+const FOCUS_TIME_MINUTES = 5 * 60 * 1000
 const COMPLETE_TIME_MINUTES = 0 * 60 * 1000
 export default function App() {
    const [timerCount, setTimerCount] = useState<number>(FOCUS_TIME_MINUTES)
@@ -39,8 +40,10 @@ setIsTimerRunning(false)
 
 
   return (
-    <View style={styles.container}>
-      <Text>{timerMode==='Meditate' ? 'Meditate':"Complete"} </Text>
+    <View style={{
+      ...styles.container, 
+      ...{backgroundColor: timerMode === 'Complete' ? '#2a9d8f' : '#d95550'}}}>
+     <TimerModeDisplay timerMode={timerMode}/>
       <StatusBar style="auto" />
       <TimerToggleButton isTimerRunning={isTimerRunning} startTimer={startTimer} stopTimer={stopTimer} />
        <TimerCountDownDisplay timerDate={new Date(timerCount)}/>
